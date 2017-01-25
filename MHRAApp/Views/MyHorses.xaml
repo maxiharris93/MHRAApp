@@ -1,0 +1,280 @@
+﻿<Page
+    x:Class="MHRAApp.Views.MyHorses"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MHRAApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+    <!--APP BARS-->
+    <Page.TopAppBar>
+        <CommandBar>
+            <CommandBar.Content>
+                <Grid/>
+            </CommandBar.Content>
+            <AppBarButton Name="Profile" 
+                          Icon="Contact"
+                          Label="Visit Profile"
+                          Click="Profile_Click"/>
+        </CommandBar>
+    </Page.TopAppBar>
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.Content>
+                <Grid/>
+            </CommandBar.Content>
+            <AppBarButton Name="AddHorse" 
+                          Icon="Add" 
+                          Label="Add a Horse" 
+                          Click="AddHorse_Click"/>
+            <AppBarButton Name="ChangeHorse"
+                          Icon="Edit"
+                          Label="Change a Horse"
+                          Click="ChangeHorse_Click"/>
+            <AppBarButton Name="RemoveHorse"
+                          Icon="Delete"
+                          Label="Remove a Horse"
+                          Click="RemoveHorse_Click">
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource PageSubHeader}"
+                                       Text="This horse will be permanently removed from the academy."/>
+                            <TextBlock Style="{StaticResource PageSubHeader}"
+                                       Text="Do you want to continue?"/>
+                            <Button Style="{StaticResource DeleteButton}"
+                                    Click="DeleteConfirmation_Click"
+                                    Content="Yes, remove horse"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+    </Page.BottomAppBar>
+    
+    <!--PAGE RESOURCES-->
+    <Page.Resources>
+        <DataTemplate x:Key="HorsesDataTemplate">
+            <StackPanel Style="{StaticResource BigButtonPanel}">
+                <TextBlock Text="{Binding Name}"
+                           Style="{StaticResource Label}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <!--VISIBLE PART OF PAGE-->
+    <Grid Background="SandyBrown">
+        <Grid.RowDefinitions>
+            <!--HEADER-->
+            <RowDefinition Height="Auto"/>
+            <!--SUBHEADER-->
+            <RowDefinition Height="Auto"/>
+            <!--BODY-->
+            <RowDefinition Height="*"/>
+            <!--FOOTER-->
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="50"/>
+        </Grid.ColumnDefinitions>
+        <!--PAGE HEADER SECTION-->
+        <Rectangle Style="{StaticResource BlackMargin}"/>
+        <Button Name="BackButton"
+                Style="{StaticResource BackButton}"
+                Click="BackButton_Click"/>
+        <TextBlock Name="PageTitleTB"
+                   Style="{StaticResource PageHeader}"/>
+        <TextBlock Name="SubHeadTB"
+                   Style="{StaticResource PageSubHeader}">Add a new horse, or view and edit existing horses:</TextBlock>
+
+        <!--MAIN CONTENT SECTION-->
+        <Grid Grid.Column="1"
+              Grid.Row="2">
+            <!--DETAILS-->
+            <ScrollViewer Width="Auto">
+                <StackPanel>
+                    <Button Name="BackToGridView"
+                            Click="BackToGridView_Click"
+                            Content="Go back to your stable"/>
+                    <!--SECTION TO VIEW DETAILS ABOUT A SPECIFIC HORSE-->
+                    <StackPanel Name="ViewSection"
+                                Style="{StaticResource FormBox}">
+                        <StackPanel Name="HorseIntro">
+                            <!--<Image Name="ShowHorseImg"
+                                Style="{StaticResource HorseImg}"/>-->
+                            <StackPanel>
+                                <TextBlock Name="ShowHorseName"
+                                            Style="{StaticResource DetailLabel}"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="10,0,0,0">
+                                    <TextBlock Name="ShowHorseAge"
+                                                Style="{StaticResource InlineLabel}"/>
+                                    <TextBlock Style="{StaticResource InlineLabel}"
+                                                Text="year old"/>
+                                    <TextBlock Name="ShowHorseBreed"
+                                                Style="{StaticResource InlineLabel}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource DetailLabel}"
+                                           Text="Riding Discipline:"/>
+                                    <TextBlock Name="ShowHorseDiscipline"
+                                            Style="{StaticResource DetailLabel}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource DetailLabel}"
+                                           Text="Comments:"/>
+                            <TextBlock Name="ShowHorseNotes"
+                                       Style="{StaticResource DetailLabel}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--SECTION FOR ADDING A NEW HORSE-->
+                    <StackPanel Name="NewSection"
+                                Style="{StaticResource FormBox}">
+                        <StackPanel Name="NewSectionWrap"
+                                    Orientation="Horizontal">
+                            <StackPanel>
+                                <!--name-->
+                                <TextBlock Style="{StaticResource Label}">Enter name of horse:</TextBlock>
+                                <TextBox Name="txtNewHorseName"
+                                         Style="{StaticResource NormalTextBox}"/>
+                                <!--age-->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Label}">Age of horse:</TextBlock>
+                                    <TextBlock Text="{Binding Value, ElementName=NewHorseAge}"
+                                               Style="{StaticResource Label}"/>
+                                </StackPanel>
+                                <Slider Name="NewHorseAge"
+                                        Style="{StaticResource HorseSkillSlider}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <!--breed-->
+                                <TextBlock Style="{StaticResource Label}">Breed of horse:</TextBlock>
+                                <TextBox Name="txtNewHorseBreed"
+                                         Style="{StaticResource NormalTextBox}"
+                                         Text="Unknown"/>
+                                <!--discipline-->
+                                <TextBlock Style="{StaticResource Label}">Primary discipline:</TextBlock>
+                                <ComboBox Name="NewHorseDiscipline"
+                                          Style="{StaticResource NormalComboBox}"
+                                          SelectedValuePath="Content">
+                                    <ComboBoxItem Content="None" IsSelected="True"/>
+                                    <ComboBoxItem Content="Show Jumping"/>
+                                    <ComboBoxItem Content="Dressage"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <!--notes-->
+                        <TextBlock Style="{StaticResource Label}">Notes:</TextBlock>
+                        <TextBox Name="txtNewHorseNotes"
+                                 Style="{StaticResource NotesBox}"/>
+                        <!--buttons-->
+                        <StackPanel Style="{StaticResource EditButtonSection}">
+                            <Button Name="SaveNewHorse"
+                                    Style="{StaticResource EditButton}"
+                                    Click="SaveNewHorse_Click"
+                                    Content="Add Horse"/>
+                            <Button Name="CancelNewSave"
+                                    Style="{StaticResource EditButton}"
+                                    Click="CancelNewSave_Click"
+                                    Content="Cancel"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--SECTION FOR EDITING A SELECTED HORSE-->
+                    <StackPanel Name="EditSection"
+                                Style="{StaticResource FormBox}">
+                        <StackPanel Name="EditSectionWrap"
+                                    Orientation="Horizontal">
+                            <StackPanel>
+                                <!--name-->
+                                <TextBlock Style="{StaticResource Label}">Enter name of horse:</TextBlock>
+                                <TextBox Name="txtEditHorseName"
+                                 Style="{StaticResource NormalTextBox}"/>
+                                <!--age-->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Label}">Age of horse:</TextBlock>
+                                    <TextBlock Text="{Binding Value, ElementName=EditHorseAge}"
+                                               Style="{StaticResource Label}"/>
+                                </StackPanel>
+                                <Slider Name="EditHorseAge"
+                                        Style="{StaticResource HorseSkillSlider}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <!--breed-->
+                                <TextBlock Style="{StaticResource Label}">Breed of horse:</TextBlock>
+                                <TextBox Name="txtEditHorseBreed"
+                                 Style="{StaticResource NormalTextBox}"/>
+                                <!--discipline-->
+                                <TextBlock Style="{StaticResource Label}">Primary discipline:</TextBlock>
+                                <ComboBox Name="EditHorseDiscipline"
+                                  Style="{StaticResource NormalComboBox}"
+                                  SelectedValuePath="Content">
+                                    <ComboBoxItem Content="None" IsSelected="True"/>
+                                    <ComboBoxItem Content="Show Jumping"/>
+                                    <ComboBoxItem Content="Dressage"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <!--notes-->
+                        <TextBlock Style="{StaticResource Label}">Notes:</TextBlock>
+                        <TextBox Name="txtEditHorseNotes"
+                                 Style="{StaticResource NotesBox}"/>
+                        <!--buttons-->
+                        <StackPanel Style="{StaticResource EditButtonSection}">
+                            <Button Name="SaveExistingHorse"
+                                    Style="{StaticResource EditButton}"
+                                    Click="SaveExistingHorse_Click"
+                                    Content="Save Horse"/>
+                            <Button Name="CancelExistingSave"
+                                    Style="{StaticResource EditButton}"
+                                    Click="CancelExistingSave_Click"
+                                    Content="Cancel"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!--MASTER GRIDVIEW-->
+            <ScrollViewer Name="GridViewSection">
+                <GridView Name="HorsesGridView"
+                          IsItemClickEnabled="True"
+                          ItemClick="HorsesGridView_ItemClick"
+                          ItemTemplate="{StaticResource HorsesDataTemplate}"/>
+            </ScrollViewer>
+        </Grid>
+
+        <!--VISUAL STATES-->
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="PageTitleTB.FontSize" Value="35"/>
+                        <Setter Target="PageTitleTB.Height" Value="Auto"/>
+                        <Setter Target="HorseIntro.Orientation" Value="Vertical"/>
+                        <Setter Target="NewSectionWrap.Orientation" Value="Vertical"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="WideLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="PageTitleTB.FontSize" Value="45"/>
+                        <Setter Target="PageTitleTB.Height" Value="100"/>
+                        <Setter Target="HorseIntro.Orientation" Value="Horizontal"/>
+                        <Setter Target="NewSectionWrap.Orientation" Value="Horizontal"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>
